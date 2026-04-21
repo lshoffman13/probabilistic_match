@@ -63,14 +63,16 @@ I use these pre-classified data to train my classifier.
 * clean_opensecrets_data(): Loads OpenSecrets data from data/il_opensecrets_orgs.csv, removes entries labeled as “self employed,” and return a list of CleanedData tuples.
 
 
-## Part 2: Generating Similarity Tuples: To account for inconsistencies in company and city names across datasets, this project uses Jaro-Winkler string similarity (via the jellyfish library) to measure how closely two strings match. Similarity scores are categorized into high (0.95–1.0), medium (0.8–0.95), and low (<0.8) levels. For each pair of records, similarity is computed for both company and city names, and combined with an exact ZIP code match to form a SimilarityTuple—a structured representation of how similar two records are across key fields. This tuple serves as the foundation for downstream matching and classification
+## Part 2: Generating Similarity Tuples: 
+To account for inconsistencies in company and city names across datasets, this project uses Jaro-Winkler string similarity (via the jellyfish library) to measure how closely two strings match. Similarity scores are categorized into high (0.95–1.0), medium (0.8–0.95), and low (<0.8) levels. For each pair of records, similarity is computed for both company and city names, and combined with an exact ZIP code match to form a SimilarityTuple—a structured representation of how similar two records are across key fields. This tuple serves as the foundation for downstream matching and classification
 
 * SimilarityTuple: A named tuple that stores similarity results for a pair of records, including name_sim (company name similarity), city_sim (city similarity), and zip_match (exact ZIP code match as a boolean).
 * rate(): Converts a Jaro-Winkler similarity score (0–1) into a categorical label: "high" (≥ 0.95), "medium" (0.8–0.95), or "low" (< 0.8).
 * calculate_similarity_tuple(): Computes similarity between two CleanedData records by applying Jaro-Winkler similarity to company names and cities, checks for exact ZIP code matches, and returns a SimilarityTuple with categorized similarity levels and ZIP match status
 
 
-## Part 3: Training the Classifier: The `train_classifier()` function builds a probabilistic classifier that maps each possible `SimilarityTuple` to one of three labels: MATCH, NON_MATCH, or MAYBE_MATCH.
+## Part 3: Training the Classifier: 
+The `train_classifier()` function builds a probabilistic classifier that maps each possible `SimilarityTuple` to one of three labels: MATCH, NON_MATCH, or MAYBE_MATCH.
 
 Using labeled training data from `data/matches.csv` and `data/non_matches.csv`, the algorithm computes how frequently each similarity tuple appears among true matches and non-matches. These counts are converted into probabilities m(t) = P(t | match) and n(t) = P(t | non-match).
 
